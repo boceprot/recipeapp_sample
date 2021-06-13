@@ -1,0 +1,194 @@
+/* fonts */
+@import url('https://fonts.googleapis.com/css2?family=Poppins:ital,wght@0,300;0,700;1,400&display=swap');
+
+/* variables */
+:root {
+  --clr-primary-10: #F7F9FF;
+  --clr-primary-9: #EFF3FF;
+  --clr-primary-1: #4E5262;
+
+
+  --clr-grey-9: #EAEAEA;
+  --clr-grey-8: #D8D8D8;
+  --clr-grey-7: #9698A1;
+
+  --clr-white: #FFFFFF;
+
+  --ff-primary: 'Poppins', sans-serif;
+}
+
+
+*, *::before, *::after {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+ul, ol {
+  list-style: none;
+}
+input, button {
+  outline: none;
+  border: none;
+}
+
+body {
+  width: 100%;
+  font: 400 1rem/1 var(--ff-primary);
+  color: var(--clr-primary-1);
+}
+
+.container {
+  width: 100%;
+  padding: 0 1rem;
+}
+
+/* search form */
+.search-wrapper {
+  padding: 1rem 0;
+}
+.form-search {
+  position: relative;
+  display: flex;
+}
+.input {
+  width: 100%;
+  padding: 0.5rem 0.75rem;
+  border: 1px solid var(--clr-grey-9);
+  border-radius: 0.2rem;
+  background-color: var(--clr-white);
+}
+.input:focus {
+  border-color: var(--clr-grey-8);
+  outline: none;
+}
+.input::placeholder {
+  color: var(--clr-grey-8);
+}
+.input-search {
+  padding-right: 2rem;
+}
+.search-button {
+  position: absolute;
+  background-color: transparent;
+  cursor: pointer;
+  top: 50%;
+  right: 0.75rem;
+  transform: translate3d(0, -50%, 0);
+}
+
+/* favorite section */
+.favorite-section {
+  opacity: 0;
+  height: 0;
+  padding: 0;
+  background-color: var(--clr-primary-10);
+  border-top: 1px solid var(--clr-primary-9);
+  border-bottom: 1px solid var(--clr-primary-9);
+  transition: 0.2s all ease-in-out;
+}
+.favorite-section.favorite-section--show {
+  height: auto;
+  opacity: 1;
+  padding: 1.25rem 0;
+}
+.title {
+  margin-bottom: 0.75rem;
+}
+.favorite-list-wrapper {
+  display: flex;
+  max-width: 100%;
+  overflow-x: auto;
+  overflow-y: hidden;
+  padding: 0.5rem 0;
+}
+.favorite-list {
+  margin: 0 0.5rem;
+}
+.favorite-item {
+  display: flex;
+  flex-flow: column wrap;
+  align-items: center;
+}
+.favorite-item__thumbnail-wrapper {
+  position: relative;
+  overflow: hidden;
+  width: 4rem;
+  height: 4rem;
+  margin-bottom: 0.5rem;
+  border-radius: 50%;
+  flex: 0 0 auto;
+  border: 2px solid var(--clr-white);
+  box-shadow: 0px 0px 8px 0 rgba(0, 0, 0, 0.2);
+}
+.favorite-item__thumbnail {
+  display: flex;
+  width: auto;
+  height: auto;
+  max-width: 100%;
+  max-height: 100%;
+}
+.favorite-item__meal-name {
+  font-size: 0.75rem;
+  font-weight: 600;
+  text-align: center;
+}
+
+.index-section {
+  padding: 2rem 0;
+}
+
+/* meal card */
+.meal-card-list:not(:last-child) {
+  margin-bottom: 1rem;
+}
+.meal-card {
+  display: flex;
+  flex-flow: column wrap;
+  border-radius: 0.2rem;
+  box-shadow: 0 0 8px 0 rgba(0, 0, 0, 0.2);
+  overflow: hidden;
+}
+.meal-card__header {
+  position: relative;
+}
+.meal-card__label {
+  font-size: 0.75rem;
+  font-weight: 600;
+  padding: 0.5rem;
+  border-radius: 0 0.2rem 0.2rem 0;
+  position: absolute;
+  top: 1rem;
+  left: 0;
+  color: var(--clr-grey-7);
+  background-color: var(--clr-white);
+}
+.meal-card__image-wrapper {
+  display: flex;
+  max-height: 10rem;
+}
+.meal-card__image {
+  display: flex;
+  flex: 1;
+  width: auto;
+  height: auto;
+  max-width: 100%;
+  max-height: 100%;
+  object-fit: cover;
+}
+.meal-card__info {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 1.25rem 1rem;
+}
+.meal-card__meal-name {
+  font-size: 0.875rem;
+}
+.meal-card__cta {
+  color: var(--clr-grey-8);
+  background: transparent;
+  cursor: pointer;
+}
+.meal-card__cta.favorite-meal {
+  color: var(--clr-primary-1);
+}
