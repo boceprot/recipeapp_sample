@@ -63,26 +63,27 @@ class UI {
 
   getFavButtons() {
     const buttons = [...document.querySelectorAll('.fav-button')];
-    const buttonsDOM = buttons;
+    buttonsDOM = buttons;
     buttons.forEach(button => {
       let id = button.dataset.id;
-      // check if the meal already in favorites
-      let inFavorites = favorites.find(item => item.id === id);
       button.addEventListener('click', (e) => {
+        // check if the meal already in favorites
+        let inFavorites = favorites.find(item => item.id === id);
         if (inFavorites) {
           this.removeFavoriteItem(id);
+        } else {
+          e.currentTarget.classList.add('favorite-meal');
+          // get meal from meals
+          let favItem = Storage.getMeal(id);
+          // add meal to the favorites
+          favorites = [...favorites, favItem];
+          // save fav item in the storage
+          Storage.saveFavorites(favorites);
+          // display fav item
+          this.addFavoriteItem(favItem);
+          // show the favorites section
+          this.showFavorite();
         }
-        e.currentTarget.classList.add('favorite-meal');
-        // get meal from meals
-        let favItem = Storage.getMeal(id);
-        // add meal to the favorites
-        favorites = [...favorites, favItem];
-        // save fav item in the storage
-        Storage.saveFavorites(favorites);
-        // display fav item
-        this.addFavoriteItem(favItem);
-        // show the favorites section
-        this.showFavorite();
       });
     });
   }
@@ -132,14 +133,10 @@ class UI {
     Storage.saveFavorites(favorites);
     let button = this.getSingleButton(id);
     button.classList.remove('favorite-meal');
-    let favItem = this.getSingleFavItem(id)
-    favoriteMealsWrapper.removeChild(favItem);
+    favoriteMealsWrapper.removeChild(id);
   }
   getSingleButton(id) {
     return buttonsDOM.find(button => button.dataset.id === id);
-  }
-  getSingleFavItem(id) {
-    return favorites.find(item => item.dataset.id === id);
   }
 }
 
