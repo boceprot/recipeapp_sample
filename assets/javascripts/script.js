@@ -113,11 +113,11 @@ class UI {
   // setup app
   setupApp() {
     favorites = Storage.getFavorite();
-    if (favorites.length > 0) {
+    if (favorites.length < 1) {
+      this.hideFavorite();
+    } else {
       this.populateFavorites(favorites);
       this.showFavorite();
-    } else {
-      this.hideFavorite();
     }
   }
   populateFavorites(favorites) {
@@ -133,10 +133,15 @@ class UI {
     Storage.saveFavorites(favorites);
     let button = this.getSingleButton(id);
     button.classList.remove('favorite-meal');
-    favoriteMealsWrapper.removeChild(id);
+    let favoriteItem = this.getFavItems(id);
+    favoriteMealsWrapper.removeChild(favoriteItem);
   }
   getSingleButton(id) {
     return buttonsDOM.find(button => button.dataset.id === id);
+  }
+  getFavItems(id) {
+    const favoritesItems = [...document.querySelectorAll('.favorite-list')];
+    return favoritesItems.find(item => item.dataset.id === id);
   }
 }
 
