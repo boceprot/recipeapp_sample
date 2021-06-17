@@ -71,6 +71,8 @@ class UI {
         let inFavorites = favorites.find(item => item.id === id);
         if (inFavorites) {
           this.removeFavoriteItem(id);
+          let button = this.getSingleButton(id);
+          button.classList.remove('favorite-meal');
         } else {
           e.currentTarget.classList.add('favorite-meal');
           // get meal from meals
@@ -83,6 +85,9 @@ class UI {
           this.addFavoriteItem(favItem);
           // show the favorites section
           this.showFavorite();
+        }
+        if (favorites < 1) {
+          this.hideFavorite();
         }
       });
     });
@@ -102,6 +107,9 @@ class UI {
           <img class="favorite-item__thumbnail" src="${item.image}">
         </picture>
         <span class="favorite-item__meal-name">${item.name}</span>
+        <button class="favorite-item__remove">
+          <i class="fas fa-times"></i>
+        </button>
       </div>
     `;
     favoriteMealsWrapper.appendChild(element);
@@ -131,8 +139,6 @@ class UI {
   removeFavoriteItem(id) {
     favorites = favorites.filter(item => item.id !== id);
     Storage.saveFavorites(favorites);
-    let button = this.getSingleButton(id);
-    button.classList.remove('favorite-meal');
     let favoriteItem = this.getFavItems(id);
     favoriteMealsWrapper.removeChild(favoriteItem);
   }
@@ -142,6 +148,19 @@ class UI {
   getFavItems(id) {
     const favoritesItems = [...document.querySelectorAll('.favorite-list')];
     return favoritesItems.find(item => item.dataset.id === id);
+  }
+  // fav functionality
+  favoritesLogic() {
+    const buttons = [...document.querySelectorAll('.favorite-item__remove')];
+    buttons.forEach(button => {
+      let id = button.parentElement.parentElement.dataset.id;
+      button.addEventListener('click', (e) => {
+        this.removeFavoriteItem(id);
+        if (favorites < 1) {
+          this.hideFavorite();
+        }
+      });
+    });
   }
 }
 
@@ -174,6 +193,7 @@ window.addEventListener("DOMContentLoaded", () => {
       Storage.saveMeals(meals);
     }).then(() => {
       ui.getFavButtons();
+      ui.favoritesLogic();
     });
 });
 

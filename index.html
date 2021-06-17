@@ -29,14 +29,6 @@
         <div class="container-fluid">
           <h3 class="title">Favorite meals</h3>
           <ul class="favorite-list-wrapper">
-            <!-- <li class="favorite-list">
-              <div class="favorite-item">
-                <picture class="favorite-item__thumbnail-wrapper">
-                  <img class="favorite-item__thumbnail" src="https://www.themealdb.com/images/media/meals/wyrqqq1468233628.jpg">
-                </picture>
-                <span class="favorite-item__meal-name">Fav Meals</span>
-              </div>
-            </li> -->
           </ul>
         </div>
       </section>
@@ -44,32 +36,52 @@
       <section class="index-section">
         <div class="container">
           <ul class="meal-cards">
-            <!-- <li class="meal-card-list">
-              <div class="meal-card">
-                <div class="meal-card__header">
-                  <picture class="meal-card__image-wrapper">
-                    <img src="https://www.themealdb.com/images/media/meals/wyrqqq1468233628.jpg" alt="meal image" class="meal-card__image">
-                  </picture>
-                  <span class="meal-card__label">Recipe of the day</span>
-                </div>
-                <div class="meal-card__info">
-                  <h4 class="meal-card__meal-name">Random Favorite Meal</h4>
-                  <ul class="meal-card__cta-container">
-                    <li class="meal-card__cta-list">
-                      <button class="meal-card__cta fav-button">
-                        <i class="fas fa-heart"></i>
-                      </button>
-                    </li>
-                  </ul>
-                </div>
-              </div>
-            </li> -->
           </ul>
         </div>
       </section>
 
     </main>
-
+    <div class="modal-overlay">
+      <div class="modal">
+        <div class="container">
+          <div class="meal-details">
+            <h2 class="meal-details__title">
+              Rendang
+              <button class="meal-details__cta fav-button" data-id="${meal.id}">
+                <i class="fas fa-heart"></i>
+              </button>
+            </h2>
+            <section class="meal-details__header">
+              <picture class="meal-details__image-wrapper">
+                <img src="https://www.themealdb.com/images/media/meals/hx335q1619789561.jpg" alt="meal name" class="meal-details__image">
+              </picture>
+              <span class="meal-details__label">Recipe of the day</span>
+            </section>
+            <section class="meal-details__section">
+              <h4 class="meal-details__section-title">Instruction</h4>
+              <p class="meal-details__instruction">Lorem ipsum dolor sit amet consectetur adipisicing elit. Culpa autem beatae porro repudiandae cupiditate veritatis sequi vitae officia, quisquam officiis odit esse architecto accusamus perferendis praesentium deserunt temporibus neque molestias!</p>
+            </section>
+            <section class="meal-details__section">
+              <h4 class="meal-details__section-title">Ingredients</h4>
+              <ul class="meal-details__ingredients">
+                <li class="meal-details__ingredient">
+                  Minced Beef <span class="meal-details__measure">1 lb</span>
+                </li>
+                <li class="meal-details__ingredient">
+                  Minced Beef <span class="meal-details__measure">1 lb</span>
+                </li>
+                <li class="meal-details__ingredient">
+                  Minced Beef <span class="meal-details__measure">1 lb</span>
+                </li>
+                <li class="meal-details__ingredient">
+                  Minced Beef <span class="meal-details__measure">1 lb</span>
+                </li>
+              </ul>
+            </section>
+          </div>
+        </div>
+      </div>
+    </div>
     <!-- JS -->
     <script src="assets/javascripts/script.js"></script>
   </body>
