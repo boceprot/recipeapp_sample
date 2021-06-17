@@ -2,123 +2,178 @@
 const randomMealsWrapper = document.querySelector('.meal-cards');
 const favoriteSection = document.querySelector('.favorite-section');
 const favoriteMealsWrapper = document.querySelector('.favorite-list-wrapper');
+// data from API
+const randomMealApi_url = 'https://www.themealdb.com/api/json/v1/1/random.php';
 
-// display all items when page load
-window.addEventListener("DOMContentLoaded", function () {
-  getRandomMeal();
-  setupFavoriteList();
-});
+// favorites
+let favorites = [];
+let buttonsDOM = [];
 
-// fetch data from API
-async function getRandomMeal() {
-  const resp = await fetch('https://www.themealdb.com/api/json/v1/1/random.php');
-  const respData = await resp.json();
-  const randomMeal = respData.meals[0];
-
-  addMeal(randomMeal, true);
-}
-
-// add random meal to the list
-function addMeal(mealData) {
-  const mealList = document.createElement('li');
-  mealList.classList.add('meal-card-list');
-
-  mealList.innerHTML =
-  `
-    <div class="meal-card">
-      <div class="meal-card__header">
-        <picture class="meal-card__image-wrapper">
-          <img src="${mealData.strMealThumb}" alt="${mealData.strMeal}" class="meal-card__image">
-        </picture>
-        <span class="meal-card__label">Recipe of the day</span>
-      </div>
-      <div class="meal-card__info">
-        <h4 class="meal-card__meal-name">${mealData.strMeal}</h4>
-        <ul class="meal-card__cta-container">
-          <li class="meal-card__cta-list">
-            <button class="meal-card__cta fav-button">
-              <i class="fas fa-heart"></i>
-            </button>
-          </li>
-        </ul>
-      </div>
-    </div>
-  `
-  randomMealsWrapper.appendChild(mealList);
-
-  // add/remove to favorite
-  const favButtons = document.querySelectorAll('.fav-button');
-
-  favButtons.forEach(function(favButton) {
-    favButton.addEventListener('click', (e) => {
-      e.preventDefault;
-      const button = e.currentTarget;
-      if (button.classList.contains('favorite-meal')) {
-        button.classList.remove('favorite-meal');
-        removeMealFromLocalStorage(mealData);
-      } else {
-        button.classList.add('favorite-meal');
-        addMealToLocalStorage(mealData);
-      }
-      setBackToDefault();
-    });
-  });
-}
-
-// check and setup favorite list
-function setupFavoriteList() {
-  const mealIds = getMealFromLocalStorage();
-
-  if (mealIds.length > 0) {
-    mealIds.forEach(function(meal) {
-      createFavoriteList(meal);
-    });
-    favoriteSection.classList.add('favorite-section--show');
-  } else if (mealIds.length === 0) {
-    favoriteSection.classList.add('favorite-section--show');
-  } else {
-    return createFavoriteList(meal);
+// getting the random meal
+class Meals {
+  async getRandomMeal() {
+    try {
+      let resp = await fetch(randomMealApi_url);
+      let respData = await resp.json();
+      let meals = respData.meals;
+      meals = meals.map(meal => {
+        const name = meal.strMeal;
+        const id = meal.idMeal;
+        const image = meal.strMealThumb;
+        return {name, id, image};
+      });
+      return meals;
+    } catch (error) {
+      console.log(error);
+    }
   }
 }
 
-// render favorite item
-function createFavoriteList(item) {
-  const element = document.createElement('li');
-  // add class
-  element.classList.add('favorite-list');
-  // add id
-  element.innerHTML =
-  `
-    <div class="favorite-item">
-      <picture class="favorite-item__thumbnail-wrapper">
-        <img class="favorite-item__thumbnail" src="${item.strMealThumb}">
-      </picture>
-      <span class="favorite-item__meal-name">${item.strMeal}</span>
-    </div>
-  `
-  favoriteMealsWrapper.appendChild(element);
+class UI {
+  // display meals
+  displayMeals(meals) {
+    let result = '';
+    meals.forEach(meal => {
+      result +=
+        `
+        <li class="meal-card-list">
+          <div class="meal-card">
+            <div class="meal-card__header">
+              <picture class="meal-card__image-wrapper">
+                <img src="${meal.image}" alt="${meal.name}" class="meal-card__image">
+              </picture>
+              <span class="meal-card__label">Recipe of the day</span>
+            </div>
+            <div class="meal-card__info">
+              <h4 class="meal-card__meal-name">${meal.name}</h4>
+              <ul class="meal-card__cta-container">
+                <li class="meal-card__cta-list">
+                  <button class="meal-card__cta fav-button" data-id="${meal.id}">
+                    <i class="fas fa-heart"></i>
+                  </button>
+                </li>
+              </ul>
+            </div>
+          </div>
+        </li>
+      `
+    });
+    randomMealsWrapper.innerHTML = result;
+  }
+
+  getFavButtons() {
+    const buttons = [...document.querySelectorAll('.fav-button')];
+    const buttonsDOM = buttons;
+    buttons.forEach(button => {
+      let id = button.dataset.id;
+      // check if the meal already in favorites
+      let inFavorites = favorites.find(item => item.id === id);
+      button.addEventListener('click', (e) => {
+        if (inFavorites) {
+          this.removeFavoriteItem(id);
+        }
+        e.currentTarget.classList.add('favorite-meal');
+        // get meal from meals
+        let favItem = Storage.getMeal(id);
+        // add meal to the favorites
+        favorites = [...favorites, favItem];
+        // save fav item in the storage
+        Storage.saveFavorites(favorites);
+        // display fav item
+        this.addFavoriteItem(favItem);
+        // show the favorites section
+        this.showFavorite();
+      });
+    });
+  }
+
+  // check and setup favorite list
+  addFavoriteItem(item) {
+    const element = document.createElement('li');
+    // add class
+    element.classList.add('favorite-list');
+    // set attribute data-id
+    element.setAttribute('data-id', `${item.id}`);
+    element.innerHTML =
+    `
+      <div class="favorite-item">
+        <picture class="favorite-item__thumbnail-wrapper">
+          <img class="favorite-item__thumbnail" src="${item.image}">
+        </picture>
+        <span class="favorite-item__meal-name">${item.name}</span>
+      </div>
+    `;
+    favoriteMealsWrapper.appendChild(element);
+  }
+  // show favorites section
+  showFavorite() {
+    favoriteSection.classList.add('favorite-section--show');
+  }
+  // setup app
+  setupApp() {
+    favorites = Storage.getFavorite();
+    if (favorites.length > 0) {
+      this.populateFavorites(favorites);
+      this.showFavorite();
+    } else {
+      this.hideFavorite();
+    }
+  }
+  populateFavorites(favorites) {
+    favorites.forEach(item => this.addFavoriteItem(item));
+  }
+  // hide favorites section
+  hideFavorite() {
+    favoriteSection.classList.remove('favorite-section--show');
+  }
+  // remove favorite
+  removeFavoriteItem(id) {
+    favorites = favorites.filter(item => item.id !== id);
+    Storage.saveFavorites(favorites);
+    let button = this.getSingleButton(id);
+    button.classList.remove('favorite-meal');
+    let favItem = this.getSingleFavItem(id)
+    favoriteMealsWrapper.removeChild(favItem);
+  }
+  getSingleButton(id) {
+    return buttonsDOM.find(button => button.dataset.id === id);
+  }
+  getSingleFavItem(id) {
+    return favorites.find(item => item.dataset.id === id);
+  }
 }
 
 // local storage
-// set back to default
-function setBackToDefault() {
-  favoriteSection.innerHTML = '';
+class Storage {
+  static saveMeals(meals) {
+    localStorage.setItem('meals', JSON.stringify(meals));
+  }
+  static getMeal(id) {
+    let meals = JSON.parse(localStorage.getItem('meals'));
+    return meals.find(meal => meal.id === id);
+  }
+  static saveFavorites(favorites) {
+    localStorage.setItem('favorites', JSON.stringify(favorites));
+  }
+  static getFavorite() {
+    return localStorage.getItem('favorites') ? JSON.parse(localStorage.getItem('favorites')) : [];
+  }
 }
 
-function getMealFromLocalStorage() {
-  return localStorage.getItem('mealIds') ? JSON.parse(localStorage.getItem('mealIds')) : [];
-}
-
-function addMealToLocalStorage(mealId) {
-  let mealIds = getMealFromLocalStorage();
-  localStorage.setItem('mealIds', JSON.stringify([...mealIds, mealId]));
-  mealIds.push(mealId);
-}
-
-function removeMealFromLocalStorage(mealId) {
-  let mealIds = getMealFromLocalStorage();
-  localStorage.setItem('mealIds', JSON.stringify(mealIds.filter((id) => id !== mealId)));
-}
+window.addEventListener("DOMContentLoaded", () => {
+  const meals = new Meals();
+  const ui = new UI();
+  // setup app
+  ui.setupApp();
+  // get random meals
+  meals.getRandomMeal()
+    .then(meals => {
+      ui.displayMeals(meals);
+      Storage.saveMeals(meals);
+    }).then(() => {
+      ui.getFavButtons();
+    });
+});
 
 
 

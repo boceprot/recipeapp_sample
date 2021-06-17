@@ -41,6 +41,9 @@ body {
   width: 100%;
   padding: 0 1rem;
 }
+.container-fluid {
+  width: 100vw;
+}
 
 /* search form */
 .search-wrapper {
@@ -93,6 +96,7 @@ body {
 }
 .title {
   margin-bottom: 0.75rem;
+  padding: 0 1rem;
 }
 .favorite-list-wrapper {
   display: flex;
@@ -103,6 +107,12 @@ body {
 }
 .favorite-list {
   margin: 0 0.5rem;
+}
+.favorite-list:first-child {
+  margin: 0 0.5rem 0 1rem;
+}
+.favorite-list:last-child {
+  margin: 0 1rem 0 0.5rem;
 }
 .favorite-item {
   display: flex;
