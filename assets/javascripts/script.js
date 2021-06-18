@@ -23,7 +23,10 @@ class Meals {
         const name = meal.strMeal;
         const id = meal.idMeal;
         const image = meal.strMealThumb;
-        return {name, id, image};
+        const instruction = meal.strInstructions;
+        const ingredient = meal.strIngredient1;
+        const measure = meal.strMeasure1;
+        return {name, id, image, instruction, ingredient, measure};
       });
       return meals;
     } catch (error) {
@@ -106,10 +109,10 @@ class UI {
     element.innerHTML =
     `
       <div class="favorite-item">
-        <picture class="favorite-item__thumbnail-wrapper">
+        <picture class="favorite-item__thumbnail-wrapper modal-trigger" data-id="${item.id}" >
           <img class="favorite-item__thumbnail" src="${item.image}">
         </picture>
-        <span class="favorite-item__meal-name">${item.name}</span>
+        <span class="favorite-item__meal-name modal-trigger" data-id="${item.id}">${item.name}</span>
         <button class="favorite-item__remove">
           <i class="fas fa-times"></i>
         </button>
@@ -175,33 +178,37 @@ class UI {
     modalTriggers.forEach(link => {
       let id = link.dataset.id;
       link.addEventListener('click', () => {
-        // this.getDetails(id);
-        this.displayDetails(id);
+        let inFavorites = favorites.find(item => item.id === id);
+        if (inFavorites) {
+          this.displayFavoriteDetails(inFavorites);
+        } else {
+          this.displayDetails(id);
+        }
         this.showModal();
       });
     })
   }
-  displayDetails(meal) {
-    Storage.getMeal(meal);
+  displayDetails(meals) {
     let result = '';
+    let item = Storage.getMeal(meals);
     result +=
       `
       <div class="container">
         <h2 class="meal-details__title">
-          ${meal.name}
-          <button class="meal-details__cta fav-button" data-id="${meal.id}">
+          ${item.name}
+          <button class="meal-details__cta fav-button" data-id="${item.id}">
             <i class="fas fa-heart"></i>
           </button>
         </h2>
         <section class="meal-details__header">
           <picture class="meal-details__image-wrapper">
-            <img src="${meal.image}" alt="${meal.name}" class="meal-details__image">
+            <img src="${item.image}" alt="${item.name}" class="meal-details__image">
           </picture>
           <span class="meal-details__label">Recipe of the day</span>
         </section>
         <section class="meal-details__section">
           <h4 class="meal-details__section-title">Instruction</h4>
-          <p class="meal-details__instruction">Lorem ipsum dolor sit amet consectetur adipisicing elit. Culpa autem beatae porro repudiandae cupiditate veritatis sequi vitae officia, quisquam officiis odit esse architecto accusamus perferendis praesentium deserunt temporibus neque molestias!</p>
+          <p class="meal-details__instruction">${item.instruction}</p>
         </section>
         <section class="meal-details__section">
           <h4 class="meal-details__section-title">Ingredients</h4>
@@ -219,6 +226,49 @@ class UI {
         </section>
       </div>
     `;
+    modalContent.innerHTML = result;
+  }
+  displayFavoriteDetails(meals) {
+    let result = '';
+    let items = Storage.getFavorite(meals);
+    items.forEach(item => {
+      result +=
+        `
+        <div class="container">
+          <h2 class="meal-details__title">
+            ${item.name}
+            <button class="meal-details__cta fav-button" data-id="${item.id}">
+              <i class="fas fa-heart"></i>
+            </button>
+          </h2>
+          <section class="meal-details__header">
+            <picture class="meal-details__image-wrapper">
+              <img src="${item.image}" alt="${item.name}" class="meal-details__image">
+            </picture>
+            <span class="meal-details__label">Recipe of the day</span>
+          </section>
+          <section class="meal-details__section">
+            <h4 class="meal-details__section-title">Instruction</h4>
+            <p class="meal-details__instruction">${item.instruction}</p>
+          </section>
+          <section class="meal-details__section">
+            <h4 class="meal-details__section-title">Ingredients</h4>
+            <ul class="meal-details__ingredients">
+              <li class="meal-details__ingredient">
+                <span class="meal-details__measure">1 lb</span> Minced Beef
+              </li>
+              <li class="meal-details__ingredient">
+                <span class="meal-details__measure">1 lb</span> Minced Beef
+              </li>
+              <li class="meal-details__ingredient">
+                <span class="meal-details__measure">1 lb</span> Minced Beef
+              </li>
+            </ul>
+          </section>
+        </div>
+      `;
+    });
+
     modalContent.innerHTML = result;
   }
   showModal() {
@@ -257,9 +307,9 @@ window.addEventListener("DOMContentLoaded", () => {
       ui.displayMeals(meals);
       Storage.saveMeals(meals);
     }).then(() => {
-      ui.getFavButtons();
       ui.favoritesLogic();
       ui.getModalTrigger();
+      ui.getFavButtons();
     });
 });
 

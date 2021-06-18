@@ -224,6 +224,7 @@ body {
   position: relative;
   padding-right: 2rem;
   margin: 1.25rem 0;
+  text-transform: capitalize;
 }
 .meal-details__cta {
   position: absolute;
@@ -285,7 +286,7 @@ body {
   position: fixed;
   inset: 0 0 0 0;
   background-color: rgba(0, 0, 0, 0.8);
-  padding: 3rem 1rem 0;
+  padding: 3rem 0 0;
   visibility: hidden;
   opacity: 0;
   pointer-events: none;
