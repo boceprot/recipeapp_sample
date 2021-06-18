@@ -2,6 +2,9 @@
 const randomMealsWrapper = document.querySelector('.meal-cards');
 const favoriteSection = document.querySelector('.favorite-section');
 const favoriteMealsWrapper = document.querySelector('.favorite-list-wrapper');
+const modalOverlay = document.querySelector('.modal-overlay');
+const modalClose = document.querySelector('.modal-close');
+const modalContent = document.querySelector('.modal__body');
 // data from API
 const randomMealApi_url = 'https://www.themealdb.com/api/json/v1/1/random.php';
 
@@ -39,13 +42,13 @@ class UI {
         <li class="meal-card-list">
           <div class="meal-card">
             <div class="meal-card__header">
-              <picture class="meal-card__image-wrapper">
+              <picture class="meal-card__image-wrapper modal-trigger" data-id="${meal.id}">
                 <img src="${meal.image}" alt="${meal.name}" class="meal-card__image">
               </picture>
               <span class="meal-card__label">Recipe of the day</span>
             </div>
             <div class="meal-card__info">
-              <h4 class="meal-card__meal-name">${meal.name}</h4>
+              <h4 class="meal-card__meal-name modal-trigger" data-id="${meal.id}">${meal.name}</h4>
               <ul class="meal-card__cta-container">
                 <li class="meal-card__cta-list">
                   <button class="meal-card__cta fav-button" data-id="${meal.id}">
@@ -127,6 +130,9 @@ class UI {
       this.populateFavorites(favorites);
       this.showFavorite();
     }
+    modalClose.addEventListener('click', () => {
+      this.hideModal();
+    });
   }
   populateFavorites(favorites) {
     favorites.forEach(item => this.addFavoriteItem(item));
@@ -162,6 +168,65 @@ class UI {
       });
     });
   }
+
+  // get modal trigger
+  getModalTrigger() {
+    const modalTriggers = [...document.querySelectorAll('.modal-trigger')];
+    modalTriggers.forEach(link => {
+      let id = link.dataset.id;
+      link.addEventListener('click', () => {
+        // this.getDetails(id);
+        this.displayDetails(id);
+        this.showModal();
+      });
+    })
+  }
+  displayDetails(meal) {
+    Storage.getMeal(meal);
+    let result = '';
+    result +=
+      `
+      <div class="container">
+        <h2 class="meal-details__title">
+          ${meal.name}
+          <button class="meal-details__cta fav-button" data-id="${meal.id}">
+            <i class="fas fa-heart"></i>
+          </button>
+        </h2>
+        <section class="meal-details__header">
+          <picture class="meal-details__image-wrapper">
+            <img src="${meal.image}" alt="${meal.name}" class="meal-details__image">
+          </picture>
+          <span class="meal-details__label">Recipe of the day</span>
+        </section>
+        <section class="meal-details__section">
+          <h4 class="meal-details__section-title">Instruction</h4>
+          <p class="meal-details__instruction">Lorem ipsum dolor sit amet consectetur adipisicing elit. Culpa autem beatae porro repudiandae cupiditate veritatis sequi vitae officia, quisquam officiis odit esse architecto accusamus perferendis praesentium deserunt temporibus neque molestias!</p>
+        </section>
+        <section class="meal-details__section">
+          <h4 class="meal-details__section-title">Ingredients</h4>
+          <ul class="meal-details__ingredients">
+            <li class="meal-details__ingredient">
+              <span class="meal-details__measure">1 lb</span> Minced Beef
+            </li>
+            <li class="meal-details__ingredient">
+              <span class="meal-details__measure">1 lb</span> Minced Beef
+            </li>
+            <li class="meal-details__ingredient">
+              <span class="meal-details__measure">1 lb</span> Minced Beef
+            </li>
+          </ul>
+        </section>
+      </div>
+    `;
+    modalContent.innerHTML = result;
+  }
+  showModal() {
+    modalOverlay.classList.add('modal-overlay--show');
+  }
+  hideModal() {
+    modalOverlay.classList.remove('modal-overlay--show');
+  }
 }
 
 // local storage
@@ -194,6 +259,7 @@ window.addEventListener("DOMContentLoaded", () => {
     }).then(() => {
       ui.getFavButtons();
       ui.favoritesLogic();
+      ui.getModalTrigger();
     });
 });
 
